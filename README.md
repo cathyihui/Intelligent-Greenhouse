@@ -3,6 +3,7 @@ With the development of technologies, the greenhouse can be innovative by implem
 
 Use the CSS files and the HTML file in the "clients" folder to build the web page like this:  
 <image src = "clients/images/finalwebpage.PNG" height = 350>  
-In the Greenhouse model, the sensors and devices' layout are shown as follows:  
+
+Use the code in the file "ArduinoCode"In the Greenhouse model, the sensors and devices' layout are shown as follows:  
 <image src = "clients/images/pinlayour.PNG" height = 350>  
 
