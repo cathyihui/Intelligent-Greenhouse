@@ -1,0 +1,201 @@
+/*import libraries*/
+#include "Seeed_BMP280.h"
+#include <Wire.h>
+#include "DHT.h"
+#include<Arduino.h>
+
+#define DHTPIN 3 //The sensor DHT11 is connected to pin 3
+#define DHTTYPE DHT11 //define DHT type which is 11
+DHT dht(DHTPIN,DHTTYPE);
+float temp,humi;//define variable to store readings
+
+int lightsensor = A6;
+int light = 0;
+
+int moisturePin = A0;
+float moistureValue = 0;
+
+//turn on the led light
+int ledpin = 2;
+uint8_t ledVal = LOW;
+
+//water button
+int pump = 7;
+uint8_t pumpval = HIGH;
+
+//fan
+int fanPin = 6;
+uint8_t fanVal = LOW;
+
+//heater
+int heaterPin = 5;
+uint8_t heaterVal = LOW;
+
+//inputString setup
+String inputString = "";
+boolean stringComplete = false;
+ 
+//the initial mode is manual
+int Automode = 0;//0 is manual mode, 1 is auto mode
+
+//modeswitch setup
+int switchMode = 0;
+
+void setup() {
+  
+  dht.begin();  
+  Serial.begin(9600);
+
+  pinMode(ledpin, OUTPUT);
+  pinMode(pump, OUTPUT);
+  pinMode(fanPin,OUTPUT);
+  pinMode(heaterPin,OUTPUT);
+  inputString.reserve(200);
+  digitalWrite(pump,pumpval);
+
+
+}
+
+
+void loop(){
+
+    temp = dht.readTemperature();
+    humi = dht.readHumidity();
+    light = analogRead(lightsensor);
+    
+    moistureValue = analogRead(moisturePin);
+    moistureValue = (moistureValue/1024)*100;
+ 
+Serial.print(temp);
+Serial.print(";");
+Serial.print(humi);
+Serial.print(";");
+Serial.print(moistureValue);
+Serial.print(";");
+Serial.println(light);//move to new line
+
+if(Automode == 1)
+{
+    //auto light
+    if(light <50)
+      {
+        digitalWrite(ledpin,HIGH);  
+      }else{
+            digitalWrite(ledpin,LOW);  
+           }
+     
+     //auto fan
+      if(humi >70)
+      {
+        digitalWrite(fanPin,HIGH);
+        }else{
+          digitalWrite(fanPin,LOW);
+          }
+     
+     //auto heater
+     if(temp<15)
+     {
+       digitalWrite(heaterPin,HIGH);
+      }if(temp > 30)
+       {
+        digitalWrite(heaterPin,LOW);
+        }
+
+    //auto water pump
+    if(moistureValue<15)
+    {
+       digitalWrite(pump,LOW);
+      }if(moistureValue>50)
+       {
+         digitalWrite(pump,HIGH);
+        }
+  }
+
+ if(switchMode == 1)
+ {
+  digitalWrite(ledpin,LOW);
+  digitalWrite(pump,HIGH);
+  digitalWrite(heaterPin,LOW);
+  digitalWrite(fanPin,LOW);
+  ledVal = LOW;
+  pumpval = HIGH;
+  fanVal = LOW;
+  heaterVal = LOW;
+  Serial.println("LED=0");
+  Serial.println("PUMP=1");
+  Serial.println("FAN=0");
+  Serial.println("Heater=0");
+  
+  switchMode = 0;
+  }
+
+
+if (stringComplete) {
+
+if(inputString.equals("automode\n"))
+{
+  Automode = 1;
+  Serial.println("ModeAuto");
+  switchMode = 1; 
+}
+
+if(inputString.equals("manualmode\n"))
+{
+  Automode = 0;
+   Serial.println("ModeManual");
+  switchMode = 1; 
+ }
+    
+if(inputString.equals("togglelight\n")&& Automode == 0)
+  {
+    ledVal = ((ledVal==HIGH)?LOW:HIGH);
+    digitalWrite(ledpin,ledVal);   // toggle the LED
+    Serial.print("LED=");  // send message back
+    Serial.println(ledVal);
+  }
+
+if(inputString.equals("togglewater\n")&& Automode == 0)
+ {
+     pumpval = ((pumpval==HIGH)?LOW:HIGH);  
+     digitalWrite(pump,pumpval);
+     Serial.print("PUMP=");
+     Serial.println(pumpval);
+  }
+
+if(inputString.equals("togglefan\n")&& Automode == 0)
+ {
+      fanVal = ((fanVal==HIGH)?LOW:HIGH); 
+      digitalWrite(fanPin,fanVal);
+      Serial.print("FAN=");
+      Serial.println(fanVal);
+  }
+
+if(inputString.equals("toggleheater\n")&& Automode == 0)
+ {
+      heaterVal = ((heaterVal==HIGH)?LOW:HIGH); 
+      digitalWrite(heaterPin,heaterVal);
+      Serial.print("Heater=");
+      Serial.println(heaterVal);
+  }
+    
+
+    // clear the string:
+    inputString = "";
+    stringComplete = false;
+}
+
+}
+
+void serialEvent() {
+  while (Serial.available()) {
+    // get the new byte:
+    char inChar = (char)Serial.read(); 
+    // add it to the inputString:
+    inputString += inChar;
+    // if the incoming character is a newline, set a flag
+    // so the main loop can do something about it:
+    if (inChar == '\n') {
+    stringComplete = true;
+    } 
+  }
+}
