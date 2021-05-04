@@ -10,7 +10,7 @@ copy the code in the file "ArduinoCode" to your Arduino file. This code sets the
 <image src = "clients/images/pinlayour.PNG" height = 350>  
 Use the socket.io application to enable the communication between the web server and the client browsers. The client browsers server the webpage we have designed. The sensors data are displayed on the webpage. The buttons on the webpage can control the status of the functionalities in the greenhouse.  
 <image src = "clients/images/products layout.PNG" height = 350>
- <image src = "clients/images/11.PNG" height = 350> 
+ <image src = "clients/images/11.PNG" height = 200> 
  
   
 
