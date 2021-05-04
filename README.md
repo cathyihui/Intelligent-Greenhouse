@@ -9,6 +9,7 @@ Use the CSS files and the HTML file in the "clients" folder to build the web pag
 copy the code in the file "ArduinoCode" to your Arduino file. This code sets the devices' connected pin, the data output format, and the input string that can toggle the status of the functionalities in the greenhouse. In the Greenhouse model, the sensors and devices' layout are shown as follows:  
 <image src = "clients/images/pinlayour.PNG" height = 350>  
 Use the socket.io application to enable the communication between the web server and the client browsers. The client browsers server the webpage we have designed. The sensors data are displayed on the webpage. The buttons on the webpage can control the status of the functionalities in the greenhouse.  
+ **Don't forget to install Node.js, Socket.io, and Express.js**  
 <image src = "clients/images/products layout.PNG" height = 350>
  <image src = "clients/images/11.jpg" height = 350> 
  
